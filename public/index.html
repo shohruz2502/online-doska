@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход в систему</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            padding: 20px;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 400px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            padding: 40px 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-container::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 150px;
+            height: 150px;
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 50%;
+        }
+
+        .login-container::after {
+            content: '';
+            position: absolute;
+            bottom: -80px;
+            left: -80px;
+            width: 200px;
+            height: 200px;
+            background: rgba(118, 75, 162, 0.1);
+            border-radius: 50%;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo h1 {
+            font-size: 2em;
+            color: #333;
+            font-weight: 700;
+        }
+
+        .logo p {
+            color: #666;
+            margin-top: 8px;
+            font-size: 0.9em;
+        }
+
+        .login-form h2 {
+            color: #333;
+            margin-bottom: 25px;
+            font-size: 1.5em;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+            font-size: 0.9em;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e1e1e1;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .login-btn:active {
+            transform: translateY(0);
+        }
+
+        .demo-accounts {
+            margin-top: 25px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            border-left: 4px solid #4CD964;
+        }
+
+        .demo-accounts h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1em;
+            text-align: center;
+        }
+
+        .demo-account {
+            background: white;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border: 1px solid #e1e1e1;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .demo-account:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .demo-account:last-child {
+            margin-bottom: 0;
+        }
+
+        .account-type {
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 5px;
+            font-size: 0.95em;
+        }
+
+        .account-credentials {
+            font-size: 0.85em;
+            color: #666;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            text-align: center;
+            margin-top: 15px;
+            padding: 12px;
+            background: rgba(231, 76, 60, 0.1);
+            border-radius: 8px;
+            display: none;
+            font-size: 0.9em;
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+
+        @keyframes floating {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+            100% { transform: translateY(0px); }
+        }
+
+        /* Адаптация для мобильных */
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 30px 20px;
+                margin: 10px;
+            }
+
+            .logo h1 {
+                font-size: 1.7em;
+            }
+
+            .login-form h2 {
+                font-size: 1.3em;
+            }
+
+            .form-group input {
+                padding: 12px 14px;
+                font-size: 15px;
+            }
+
+            .login-btn {
+                padding: 14px;
+                font-size: 15px;
+            }
+
+            .demo-accounts {
+                padding: 15px;
+            }
+
+            .demo-account {
+                padding: 10px 12px;
+            }
+
+            .account-type {
+                font-size: 0.9em;
+            }
+
+            .account-credentials {
+                font-size: 0.8em;
+            }
+        }
+
+        @media (max-width: 320px) {
+            .login-container {
+                padding: 25px 15px;
+            }
+
+            .logo h1 {
+                font-size: 1.5em;
+            }
+
+            .form-group input {
+                padding: 10px 12px;
+            }
+        }
+
+        /* Анимация появления */
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .login-container {
+            animation: slideUp 0.6s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">
+            <h1>🎨 CollabBoard</h1>
+            <p>Совместная творческая доска</p>
+        </div>
+
+        <div class="login-form">
+            <h2>Вход в систему</h2>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Логин</label>
+                    <input type="text" id="username" placeholder="Введите ваш логин" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Пароль</label>
+                    <input type="password" id="password" placeholder="Введите ваш пароль" required>
+                </div>
+
+                <button type="submit" class="login-btn pulse">Войти</button>
+
+                <div class="error-message" id="errorMessage">
+                    Неверный логин или пароль!
+                </div>
+            </form>
+
+            <div class="demo-accounts">
+                <h3>Демо-аккаунт для тестирования:</h3>
+                
+                <div class="demo-account" onclick="fillCredentials('ученица', 'student123')">
+                    <div class="account-type">👩‍🎓 Ученица</div>
+                    <div class="account-credentials">Логин: ученица | Пароль: student123</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Функция для заполнения полей логина и пароля
+        function fillCredentials(username, password) {
+            document.getElementById('username').value = username;
+            document.getElementById('password').value = password;
+            document.getElementById('loginForm').classList.add('floating');
+            setTimeout(() => {
+                document.getElementById('loginForm').classList.remove('floating');
+            }, 1000);
+        }
+
+        // Обработка формы логина
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorMessage = document.getElementById('errorMessage');
+            const loginBtn = document.querySelector('.login-btn');
+
+            // Проверка логина и пароля
+            const validUsers = {
+                'admin': 'admin123',
+                'ученица': 'student123'
+            };
+
+            if (validUsers[username] && validUsers[username] === password) {
+                // Сохраняем информацию о пользователе
+                const userInfo = {
+                    username: username,
+                    role: username === 'admin' ? 'Администратор' : 'Ученица',
+                    loginTime: new Date().toLocaleString('ru-RU')
+                };
+                
+                localStorage.setItem('currentUser', JSON.stringify(userInfo));
+                
+                // Показываем анимацию успешного входа
+                loginBtn.textContent = '✓ Успешно!';
+                loginBtn.style.background = '#2ecc71';
+                loginBtn.classList.remove('pulse');
+                
+                setTimeout(() => {
+                    window.location.href = 'main.html';
+                }, 1000);
+                
+            } else {
+                errorMessage.style.display = 'block';
+                document.getElementById('password').value = '';
+                
+                // Анимация ошибки
+                const form = document.getElementById('loginForm');
+                form.style.transform = 'translateX(10px)';
+                setTimeout(() => {
+                    form.style.transform = 'translateX(-10px)';
+                    setTimeout(() => {
+                        form.style.transform = 'translateX(0)';
+                    }, 100);
+                }, 100);
+            }
+        });
+
+        // Скрываем сообщение об ошибке при вводе
+        document.getElementById('username').addEventListener('input', function() {
+            document.getElementById('errorMessage').style.display = 'none';
+        });
+
+        document.getElementById('password').addEventListener('input', function() {
+            document.getElementById('errorMessage').style.display = 'none';
+        });
+
+        // Автофокус на поле логина
+        document.getElementById('username').focus();
+
+        // Адаптация для очень маленьких экранов
+        function checkScreenSize() {
+            if (window.innerHeight < 600) {
+                document.body.style.padding = '10px';
+                document.body.style.alignItems = 'flex-start';
+            } else {
+                document.body.style.padding = '20px';
+                document.body.style.alignItems = 'center';
+            }
+        }
+
+        window.addEventListener('resize', checkScreenSize);
+        checkScreenSize();
+    </script>
+</body>
+</html>
