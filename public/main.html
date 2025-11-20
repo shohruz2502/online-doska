@@ -60,51 +60,30 @@
             margin-bottom: 2px;
         }
 
-        .user-details .role {
-            font-size: 12px;
-            opacity: 0.7;
-        }
-
-        .role-badge {
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 11px;
-            font-weight: bold;
-        }
-
-        .role-badge.admin {
-            background: #e74c3c;
-            color: white;
-        }
-
-        .role-badge.student {
-            background: #3498db;
-            color: white;
-        }
-
         .toolbar {
             display: flex;
-            justify-content: space-around;
+            justify-content: space-between;
             align-items: center;
-            padding: 12px 8px;
+            padding: 8px 8px;
             background: #2d2d2d;
             border-bottom: 1px solid #444;
             flex-shrink: 0;
-            gap: 8px;
-            flex-wrap: wrap;
+            gap: 6px;
+            flex-wrap: nowrap;
+            overflow-x: auto;
         }
 
         .tool-btn {
             background: #4a4a4a;
             border: none;
             color: white;
-            padding: 12px 16px;
-            border-radius: 20px;
-            font-size: 14px;
+            padding: 10px 12px;
+            border-radius: 16px;
+            font-size: 12px;
             cursor: pointer;
             transition: all 0.3s;
-            flex: 1;
-            max-width: 120px;
+            flex-shrink: 0;
+            white-space: nowrap;
         }
 
         .tool-btn.active {
@@ -118,20 +97,47 @@
             transform: none !important;
         }
 
+        .color-picker-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .color-toggle {
+            background: #4a4a4a;
+            border: none;
+            color: white;
+            padding: 10px 12px;
+            border-radius: 16px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex-shrink: 0;
+            white-space: nowrap;
+        }
+
         .color-picker {
-            display: flex;
-            gap: 6px;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            display: none;
             flex-wrap: wrap;
-            justify-content: center;
-            align-items: center;
-            background: rgba(255, 255, 255, 0.1);
+            gap: 4px;
+            background: rgba(45, 45, 45, 0.95);
             padding: 8px;
-            border-radius: 20px;
+            border-radius: 12px;
+            z-index: 100;
+            margin-top: 4px;
+            border: 1px solid #444;
+            width: 150px;
+        }
+
+        .color-picker.active {
+            display: flex;
         }
 
         .color-option {
-            width: 28px;
-            height: 28px;
+            width: 24px;
+            height: 24px;
             border-radius: 50%;
             border: 2px solid transparent;
             cursor: pointer;
@@ -193,6 +199,7 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             resize: both;
             overflow: hidden;
+            touch-action: none;
         }
 
         .text-element.selected {
@@ -311,6 +318,7 @@
             background: rgba(255, 255, 255, 0.1);
             padding: 8px 12px;
             border-radius: 20px;
+            flex-shrink: 0;
         }
 
         .size-option {
@@ -334,12 +342,10 @@
 
         .delete-btn {
             background: #FF3B30 !important;
-            max-width: 80px;
         }
 
         .logout-btn {
             background: #95a5a6 !important;
-            max-width: 100px;
         }
 
         .notification {
@@ -361,19 +367,25 @@
 
         @media (max-width: 768px) {
             .toolbar {
-                padding: 10px 6px;
-                gap: 6px;
+                padding: 8px 6px;
+                gap: 4px;
             }
             
             .tool-btn {
-                padding: 10px 12px;
-                font-size: 12px;
-                max-width: 100px;
+                padding: 8px 10px;
+                font-size: 11px;
+                border-radius: 14px;
+            }
+            
+            .color-toggle {
+                padding: 8px 10px;
+                font-size: 11px;
+                border-radius: 14px;
             }
             
             .color-option {
-                width: 24px;
-                height: 24px;
+                width: 20px;
+                height: 20px;
             }
             
             #textInput {
@@ -396,6 +408,10 @@
                 height: 35px;
                 font-size: 16px;
             }
+            
+            .brush-size {
+                padding: 6px 10px;
+            }
         }
     </style>
 </head>
@@ -406,7 +422,6 @@
                 <div class="user-avatar" id="userAvatar">?</div>
                 <div class="user-details">
                     <h3 id="userName">Загрузка...</h3>
-                    <div class="role" id="userRole">Роль: ...</div>
                 </div>
             </div>
             <button class="tool-btn logout-btn" id="logoutBtn">🚪 Выйти</button>
@@ -418,13 +433,16 @@
             <button class="tool-btn" data-tool="text">📝 Текст</button>
             <button class="tool-btn" data-tool="select">✋ Выбрать</button>
             
-            <div class="color-picker">
-                <div class="color-option active" data-color="#000000" style="background: #000000"></div>
-                <div class="color-option" data-color="#FF3B30" style="background: #FF3B30"></div>
-                <div class="color-option" data-color="#4CD964" style="background: #4CD964"></div>
-                <div class="color-option" data-color="#007AFF" style="background: #007AFF"></div>
-                <div class="color-option" data-color="#FFCC00" style="background: #FFCC00"></div>
-                <div class="color-option white" data-color="#FFFFFF" style="background: #FFFFFF"></div>
+            <div class="color-picker-container">
+                <button class="color-toggle">🎨 Цвет</button>
+                <div class="color-picker" id="colorPicker">
+                    <div class="color-option active" data-color="#000000" style="background: #000000"></div>
+                    <div class="color-option" data-color="#FF3B30" style="background: #FF3B30"></div>
+                    <div class="color-option" data-color="#4CD964" style="background: #4CD964"></div>
+                    <div class="color-option" data-color="#007AFF" style="background: #007AFF"></div>
+                    <div class="color-option" data-color="#FFCC00" style="background: #FFCC00"></div>
+                    <div class="color-option white" data-color="#FFFFFF" style="background: #FFFFFF"></div>
+                </div>
             </div>
 
             <div class="brush-size">
@@ -434,7 +452,7 @@
             </div>
 
             <button class="tool-btn delete-btn" id="deleteBtn" disabled>🗑️ Удалить</button>
-            <button class="tool-btn" id="clearBtn" disabled>✨ Очистить всё</button>
+            <button class="tool-btn" id="clearBtn" disabled>✨ Очистить</button>
         </div>
 
         <div class="drawing-area">
@@ -473,6 +491,7 @@
                 this.textElements = new Map();
                 this.currentUser = null;
                 this.isEraser = false;
+                this.isColorPickerOpen = false;
                 
                 this.init();
             }
@@ -505,15 +524,9 @@
 
             updateUserInterface() {
                 document.getElementById('userName').textContent = this.currentUser.username;
-                document.getElementById('userRole').textContent = `Роль: ${this.currentUser.role}`;
                 
                 const avatar = document.getElementById('userAvatar');
-                const roleBadge = document.createElement('div');
-                roleBadge.className = `role-badge ${this.currentUser.role === 'Администратор' ? 'admin' : 'student'}`;
-                roleBadge.textContent = this.currentUser.role === 'Администратор' ? 'УЧИТЕЛЬ' : 'УЧЕНИК';
-                
                 avatar.textContent = this.currentUser.username.charAt(0).toUpperCase();
-                avatar.appendChild(roleBadge);
             }
 
             updateUIForRole() {
@@ -564,7 +577,22 @@
                     });
                 });
 
-                // Цвета
+                // Цвета - переключатель
+                document.querySelector('.color-toggle').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.isColorPickerOpen = !this.isColorPickerOpen;
+                    document.getElementById('colorPicker').classList.toggle('active');
+                });
+
+                // Закрытие палитры при клике вне ее
+                document.addEventListener('click', (e) => {
+                    if (!e.target.closest('.color-picker-container')) {
+                        this.isColorPickerOpen = false;
+                        document.getElementById('colorPicker').classList.remove('active');
+                    }
+                });
+
+                // Выбор цвета
                 document.querySelectorAll('.color-option').forEach(option => {
                     option.addEventListener('click', (e) => {
                         document.querySelectorAll('.color-option').forEach(o => o.classList.remove('active'));
@@ -574,6 +602,10 @@
                         this.ctx.globalCompositeOperation = 'source-over';
                         this.isEraser = false;
                         document.querySelector('[data-tool="pencil"]').click();
+                        
+                        // Закрываем палитру после выбора
+                        this.isColorPickerOpen = false;
+                        document.getElementById('colorPicker').classList.remove('active');
                     });
                 });
 
@@ -851,6 +883,20 @@
                     e.preventDefault();
                 });
 
+                // Touch events для мобильных устройств
+                textElement.addEventListener('touchstart', (e) => {
+                    if (this.currentTool !== 'select') return;
+                    
+                    this.selectTextElement(textElement);
+                    isDragging = true;
+                    
+                    const touch = e.touches[0];
+                    startX = touch.clientX - textElement.offsetLeft;
+                    startY = touch.clientY - textElement.offsetTop;
+                    
+                    e.preventDefault();
+                });
+
                 document.addEventListener('mousemove', (e) => {
                     if (isDragging && this.selectedTextElement === textElement) {
                         const newX = e.clientX - startX;
@@ -867,6 +913,18 @@
                     }
                 });
 
+                // Touch move для мобильных устройств
+                document.addEventListener('touchmove', (e) => {
+                    if (isDragging && this.selectedTextElement === textElement) {
+                        const touch = e.touches[0];
+                        const newX = touch.clientX - startX;
+                        const newY = touch.clientY - startY;
+                        
+                        textElement.style.left = newX + 'px';
+                        textElement.style.top = newY + 'px';
+                    }
+                });
+
                 document.addEventListener('mouseup', () => {
                     if (isDragging && this.selectedTextElement === textElement) {
                         this.updateTextPosition(textElement);
@@ -877,10 +935,11 @@
                     isResizing = false;
                 });
 
-                textElement.addEventListener('touchstart', (e) => {
-                    if (this.currentTool !== 'select') return;
-                    this.selectTextElement(textElement);
-                    e.preventDefault();
+                document.addEventListener('touchend', () => {
+                    if (isDragging && this.selectedTextElement === textElement) {
+                        this.updateTextPosition(textElement);
+                    }
+                    isDragging = false;
                 });
             }
 
@@ -1084,19 +1143,6 @@
                 }
             }
         }
-
-        // Добавляем обработку textUpdate на сервере
-        const originalSetupSocketListeners = DrawingBoard.prototype.setupSocketListeners;
-        DrawingBoard.prototype.setupSocketListeners = function() {
-            originalSetupSocketListeners.call(this);
-            
-            this.socket.on('textUpdate', (data) => {
-                const textElement = this.textElements.get(data.id);
-                if (textElement) {
-                    textElement.textContent = data.text;
-                }
-            });
-        };
 
         document.addEventListener('DOMContentLoaded', () => {
             new DrawingBoard();
